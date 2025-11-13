@@ -1,0 +1,21 @@
+<nav class="navbar">
+  <div class="container">
+    <h1>{{ title }}</h1>
+    <ul class="nav-links">
+      <li><a routerLink="/">Inicio</a></li>
+      <li><a routerLink="/viajes">Buscar Viajes</a></li>
+      <li><a routerLink="/reservas">Mis Reservas</a></li>
+      <li><a routerLink="/admin">Administración</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="container">
+  <router-outlet></router-outlet>
+</main>
+
+<footer>
+  <div class="container">
+    <p>&copy; 2025 Sistema de Viajes y Transportes. Todos los derechos reservados.</p>
+  </div>
+</footer>

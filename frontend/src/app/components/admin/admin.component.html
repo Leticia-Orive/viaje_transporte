@@ -1,0 +1,216 @@
+<div class="admin-container">
+  <h2>Panel de Administración</h2>
+
+  <div class="tabs">
+    <button 
+      (click)="setActiveTab('transportes')" 
+      [class.active]="activeTab === 'transportes'"
+      class="tab-btn">
+      Transportes
+    </button>
+    <button 
+      (click)="setActiveTab('viajes')" 
+      [class.active]="activeTab === 'viajes'"
+      class="tab-btn">
+      Viajes
+    </button>
+    <button 
+      (click)="setActiveTab('reservas')" 
+      [class.active]="activeTab === 'reservas'"
+      class="tab-btn">
+      Reservas
+    </button>
+  </div>
+
+  <!-- Tab Transportes -->
+  <div *ngIf="activeTab === 'transportes'" class="tab-content">
+    <div class="form-section">
+      <h3>Agregar Nuevo Transporte</h3>
+      <form class="admin-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Tipo *</label>
+            <select [(ngModel)]="nuevoTransporte.tipo" name="tipo" required>
+              <option value="">Seleccionar...</option>
+              <option value="Autobús">Autobús</option>
+              <option value="Tren">Tren</option>
+              <option value="Avión">Avión</option>
+              <option value="Barco">Barco</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label>Nombre *</label>
+            <input type="text" [(ngModel)]="nuevoTransporte.nombre" name="nombre" required>
+          </div>
+          
+          <div class="form-group">
+            <label>Capacidad *</label>
+            <input type="number" [(ngModel)]="nuevoTransporte.capacidad" name="capacidad" min="1" required>
+          </div>
+        </div>
+        
+        <button type="button" (click)="crearTransporte()" class="btn btn-primary">
+          Agregar Transporte
+        </button>
+      </form>
+    </div>
+
+    <div class="list-section">
+      <h3>Lista de Transportes</h3>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Tipo</th>
+            <th>Nombre</th>
+            <th>Capacidad</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let transporte of transportes">
+            <td>{{ transporte.id }}</td>
+            <td>{{ transporte.tipo }}</td>
+            <td>{{ transporte.nombre }}</td>
+            <td>{{ transporte.capacidad }}</td>
+            <td>
+              <button (click)="eliminarTransporte(transporte.id!)" class="btn btn-danger btn-sm">
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab Viajes -->
+  <div *ngIf="activeTab === 'viajes'" class="tab-content">
+    <div class="form-section">
+      <h3>Agregar Nuevo Viaje</h3>
+      <form class="admin-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Origen *</label>
+            <input type="text" [(ngModel)]="nuevoViaje.origen" name="origen" required>
+          </div>
+          
+          <div class="form-group">
+            <label>Destino *</label>
+            <input type="text" [(ngModel)]="nuevoViaje.destino" name="destino" required>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Fecha de Salida *</label>
+            <input type="datetime-local" [(ngModel)]="nuevoViaje.fecha_salida" name="fecha_salida" required>
+          </div>
+          
+          <div class="form-group">
+            <label>Fecha de Llegada *</label>
+            <input type="datetime-local" [(ngModel)]="nuevoViaje.fecha_llegada" name="fecha_llegada" required>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Precio (€) *</label>
+            <input type="number" [(ngModel)]="nuevoViaje.precio" name="precio" min="0" step="0.01" required>
+          </div>
+          
+          <div class="form-group">
+            <label>Asientos Disponibles *</label>
+            <input type="number" [(ngModel)]="nuevoViaje.asientos_disponibles" name="asientos" min="1" required>
+          </div>
+          
+          <div class="form-group">
+            <label>Transporte *</label>
+            <select [(ngModel)]="nuevoViaje.transporte_id" name="transporte" required>
+              <option value="0">Seleccionar...</option>
+              <option *ngFor="let transporte of transportes" [value]="transporte.id">
+                {{ transporte.nombre }} ({{ transporte.tipo }})
+              </option>
+            </select>
+          </div>
+        </div>
+        
+        <button type="button" (click)="crearViaje()" class="btn btn-primary">
+          Agregar Viaje
+        </button>
+      </form>
+    </div>
+
+    <div class="list-section">
+      <h3>Lista de Viajes</h3>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Origen</th>
+            <th>Destino</th>
+            <th>Salida</th>
+            <th>Precio</th>
+            <th>Asientos</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let viaje of viajes">
+            <td>{{ viaje.id }}</td>
+            <td>{{ viaje.origen }}</td>
+            <td>{{ viaje.destino }}</td>
+            <td>{{ formatDate(viaje.fecha_salida) }}</td>
+            <td>{{ viaje.precio }}€</td>
+            <td>{{ viaje.asientos_disponibles }}</td>
+            <td>
+              <button (click)="eliminarViaje(viaje.id!)" class="btn btn-danger btn-sm">
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab Reservas -->
+  <div *ngIf="activeTab === 'reservas'" class="tab-content">
+    <div class="list-section">
+      <h3>Lista de Reservas</h3>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Pasajero</th>
+            <th>Email</th>
+            <th>Asientos</th>
+            <th>Estado</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let reserva of reservas">
+            <td>{{ reserva.id }}</td>
+            <td>{{ reserva.nombre_pasajero }}</td>
+            <td>{{ reserva.email }}</td>
+            <td>{{ reserva.numero_asientos }}</td>
+            <td>
+              <span class="estado" [ngClass]="reserva.estado">
+                {{ reserva.estado }}
+              </span>
+            </td>
+            <td>{{ formatDate(reserva.fecha_reserva!) }}</td>
+            <td>
+              <button (click)="eliminarReserva(reserva.id!)" class="btn btn-danger btn-sm">
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

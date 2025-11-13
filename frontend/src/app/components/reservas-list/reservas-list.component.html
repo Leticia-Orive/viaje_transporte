@@ -1,0 +1,33 @@
+<div class="reservas-container">
+  <h2>Mis Reservas</h2>
+
+  <div class="reservas-list" *ngIf="reservas.length > 0">
+    <div class="reserva-card" *ngFor="let reserva of reservas" 
+         [ngClass]="{'cancelled': reserva.estado === 'cancelada'}">
+      <div class="reserva-header">
+        <h3>Reserva #{{ reserva.id }}</h3>
+        <span class="estado" [ngClass]="reserva.estado">
+          {{ reserva.estado }}
+        </span>
+      </div>
+      
+      <div class="reserva-details">
+        <p><strong>Pasajero:</strong> {{ reserva.nombre_pasajero }}</p>
+        <p><strong>Email:</strong> {{ reserva.email }}</p>
+        <p *ngIf="reserva.telefono"><strong>Teléfono:</strong> {{ reserva.telefono }}</p>
+        <p><strong>Asientos:</strong> {{ reserva.numero_asientos }}</p>
+        <p><strong>Fecha de reserva:</strong> {{ formatDate(reserva.fecha_reserva!) }}</p>
+      </div>
+      
+      <div class="reserva-actions" *ngIf="reserva.estado === 'confirmada'">
+        <button (click)="cancelarReserva(reserva.id!)" class="btn btn-danger">
+          Cancelar Reserva
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="reservas.length === 0" class="no-results">
+    <p>No tienes reservas registradas.</p>
+  </div>
+</div>

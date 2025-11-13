@@ -1,0 +1,105 @@
+<div class="viajes-container">
+  <h2>Buscar Viajes</h2>
+  
+  <div class="search-form">
+    <div class="form-group">
+      <label>Origen</label>
+      <input type="text" [(ngModel)]="searchOrigen" placeholder="Ciudad de origen">
+    </div>
+    
+    <div class="form-group">
+      <label>Destino</label>
+      <input type="text" [(ngModel)]="searchDestino" placeholder="Ciudad de destino">
+    </div>
+    
+    <div class="form-group">
+      <label>Fecha</label>
+      <input type="date" [(ngModel)]="searchFecha">
+    </div>
+    
+    <button (click)="buscarViajes()" class="btn btn-primary">Buscar</button>
+  </div>
+
+  <div class="viajes-grid" *ngIf="filteredViajes.length > 0">
+    <div class="viaje-card" *ngFor="let viaje of filteredViajes">
+      <div class="viaje-header">
+        <h3>{{ viaje.origen }} → {{ viaje.destino }}</h3>
+        <span class="badge">{{ viaje.transporte?.tipo }}</span>
+      </div>
+      
+      <div class="viaje-details">
+        <p><strong>Transporte:</strong> {{ viaje.transporte?.nombre }}</p>
+        <p><strong>Salida:</strong> {{ formatDate(viaje.fecha_salida) }}</p>
+        <p><strong>Llegada:</strong> {{ formatDate(viaje.fecha_llegada) }}</p>
+        <p><strong>Asientos disponibles:</strong> {{ viaje.asientos_disponibles }}</p>
+      </div>
+      
+      <div class="viaje-footer">
+        <span class="price">{{ viaje.precio }}€</span>
+        <button 
+          (click)="openReservaModal(viaje)" 
+          class="btn btn-success"
+          [disabled]="viaje.asientos_disponibles === 0">
+          {{ viaje.asientos_disponibles > 0 ? 'Reservar' : 'Agotado' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="filteredViajes.length === 0" class="no-results">
+    <p>No se encontraron viajes disponibles.</p>
+  </div>
+</div>
+
+<!-- Modal de Reserva -->
+<div class="modal" *ngIf="showReservaModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Realizar Reserva</h2>
+      <button (click)="closeReservaModal()" class="close-btn">&times;</button>
+    </div>
+    
+    <div class="modal-body" *ngIf="selectedViaje">
+      <div class="trip-info">
+        <h3>{{ selectedViaje.origen }} → {{ selectedViaje.destino }}</h3>
+        <p>{{ formatDate(selectedViaje.fecha_salida) }}</p>
+        <p>Precio: {{ selectedViaje.precio }}€ por asiento</p>
+      </div>
+      
+      <form class="reserva-form">
+        <div class="form-group">
+          <label>Nombre completo *</label>
+          <input type="text" [(ngModel)]="nuevaReserva.nombre_pasajero" 
+                 name="nombre" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Email *</label>
+          <input type="email" [(ngModel)]="nuevaReserva.email" 
+                 name="email" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Teléfono</label>
+          <input type="tel" [(ngModel)]="nuevaReserva.telefono" 
+                 name="telefono">
+        </div>
+        
+        <div class="form-group">
+          <label>Número de asientos *</label>
+          <input type="number" [(ngModel)]="nuevaReserva.numero_asientos" 
+                 name="asientos" min="1" [max]="selectedViaje.asientos_disponibles" required>
+        </div>
+        
+        <div class="total-price">
+          <strong>Total: {{ selectedViaje.precio * nuevaReserva.numero_asientos }}€</strong>
+        </div>
+      </form>
+    </div>
+    
+    <div class="modal-footer">
+      <button (click)="closeReservaModal()" class="btn btn-secondary">Cancelar</button>
+      <button (click)="crearReserva()" class="btn btn-primary">Confirmar Reserva</button>
+    </div>
+  </div>
+</div>
